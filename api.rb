@@ -8,9 +8,16 @@ class API < Grape::API
 
   default_format :json
 
-
   get :hello do
-    { hello: "world" }
+    { hello: 'world' }
+  end
+
+  resources :users do
+    get '/' do
+      @users = User.all
+      HardWorker.perform_async(2)
+      @users
+    end
   end
 
   resource :job do
@@ -40,7 +47,6 @@ class API < Grape::API
       end
     end
   end
-
 
   add_swagger_documentation info: {title: 'Swagger for example API using grape',
                                    description: 'Playground to build up an API using grape and display it with swagger'},
