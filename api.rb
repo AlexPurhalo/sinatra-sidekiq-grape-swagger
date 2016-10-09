@@ -8,43 +8,21 @@ class API < Grape::API
 
   default_format :json
 
-  get :hello do
-    { hello: 'world' }
-  end
-
   resources :users do
     get '/' do
-      @users = User.all
-      HardWorker.perform_async(2)
+      @users = User.order('created_at DESC')
       @users
     end
-  end
 
-  resource :job do
-    desc 'Start Sidekiq Background Job'
-    get :start_background_job do
-      test = Array.new
-      100.times do |count|
-        HardWorker.perform_async(count)
-        puts "#{count}. start_worker_called"
-      end
-      puts 'FINISHED START WORKER'
-      {status: 'success'}
+    params do
+      requires :name, type: String, desc: 'Name'
     end
-  end
 
-
-  resource :person do
-    resource :read do
-      route_param :name do
-        desc 'Reads name of a person and returns that name in selected format'
-        params do
-          requires :name, type:String, desc: 'Name'
-        end
-        get do
-          {name: params[:name]}
-        end
-      end
+    post '/' do
+      @user = User.new params
+      @user.save
+      HardWorker.perform_async(3, @user.id)
+      @user
     end
   end
 

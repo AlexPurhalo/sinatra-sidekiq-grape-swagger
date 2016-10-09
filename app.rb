@@ -28,9 +28,11 @@ end
 class HardWorker
   include Sidekiq::Worker
 
-  def perform(secs)
+  def perform(secs, object)
     sleep secs
-    puts 'works'
+    user = User.find(object)
+    user.destroy
+    user.save
   end
 end
 
