@@ -5,6 +5,7 @@ require 'sinatra/activerecord'
 
 require 'sidekiq'
 require 'sidekiq/api'
+
 require 'better_errors'
 
 class User < ActiveRecord::Base

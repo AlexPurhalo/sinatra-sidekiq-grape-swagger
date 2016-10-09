@@ -4,7 +4,6 @@ require './app'
 
 class API < Grape::API
   content_type :json, 'application/json'
-  content_type :xml, 'application/xml'
 
   default_format :json
 
@@ -22,7 +21,6 @@ class API < Grape::API
       @user = User.new params
       @user.save
       HardWorker.perform_async(3, @user.id)
-      @user
     end
   end
 
